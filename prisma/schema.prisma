@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://VotingSystem_owner:TrtDOV4o7CYl@ep-purple-poetry-a5o1dh1f.us-east-2.aws.neon.tech/VotingSystem?sslmode=require"
+}
+model Candidate {
+  id Int @unique  @default(autoincrement())
+  fullName String 
+  dob DateTime 
+  nationality String
+  partyname String
+  partylogo String
+  totalvotes Int @default(0)
+  votes Votes[]
+}
+model Admin{
+  id Int @unique  @default(autoincrement())
+  username String
+  password String
+}
+model Votes{
+  id Int @unique @default(autoincrement())
+  
+  voter Voter @relation(fields: [voterid],references: [id])
+  voterid Int @unique
+  candidate Candidate @relation(fields: [candidateid],references: [id])
+  candidateid Int
+  
+}
+model Voter{
+  id Int @unique @default(autoincrement())
+  name String
+  dob DateTime
+  email String @unique
+  isVerified Boolean @default(false)
+  phonenumber String @unique
+  aadharno String @unique
+  password String
+  nationality String
+  isvoted Boolean @default(false)
+  
+  token Token?
+  votes Votes?
+   resetPasswordToken   String?   // Optional field for reset token
+  resetPasswordExpires DateTime? 
+
+}
+model Token{
+  id Int @unique @default(autoincrement())
+  voterid Int @unique
+  voter Voter @relation(fields: [voterid],references: [id])
+  token String
+}
+
+
